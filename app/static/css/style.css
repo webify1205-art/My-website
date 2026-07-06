@@ -1,0 +1,198 @@
+:root {
+    --color-rose-gold: #C59B85;
+    --color-sage-green: #9CAF9A;
+    --color-dusty-mauve: #B1A2B9;
+    --color-slate-blue: #8A9BA8;
+    --color-charcoal-black: #1A1E21;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Inter', sans-serif;
+    background-color: var(--color-charcoal-black);
+    color: #E5E7EB;
+}
+
+/* Particles Canvas */
+#particles-js {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
+    z-index: 0;
+}
+
+/* Hero CTA Button - Glassmorphism */
+.hero-cta {
+    position: relative;
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border: 2px solid var(--color-sage-green);
+    background: rgba(255, 255, 255, 0.05);
+    transition: all 0.3s ease;
+    overflow: hidden;
+}
+
+.hero-cta::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(156, 175, 154, 0.3), transparent);
+    transition: left 0.5s ease;
+}
+
+.hero-cta:hover::before {
+    left: 100%;
+}
+
+.hero-cta:hover {
+    background: rgba(255, 255, 255, 0.1);
+    box-shadow: 0 0 30px rgba(156, 175, 154, 0.5), 
+                0 0 60px rgba(156, 175, 154, 0.3),
+                inset 0 0 20px rgba(156, 175, 154, 0.1);
+    transform: scale(1.05);
+}
+
+/* Hero Text Reveal */
+.reveal-text {
+    display: inline-block;
+    text-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+}
+
+h1, h2, h3 {
+    text-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+}
+
+.hero-subheadline,
+.hero-description {
+    transform: translateY(20px);
+    color: #FFFFFF;
+}
+
+.hero-cta {
+    transform: scale(0.9);
+}
+
+/* Floating Dock Navigation */
+.floating-dock {
+    position: fixed;
+    bottom: 24px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: rgba(15, 23, 42, 0.8);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 9999px;
+    padding: 12px 24px;
+    display: flex;
+    gap: 8px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4),
+                0 0 0 1px rgba(255, 255, 255, 0.05);
+    z-index: 1000;
+}
+
+.dock-item {
+    position: relative;
+    width: 48px;
+    height: 48px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 12px;
+    color: rgba(255, 255, 255, 0.6);
+    transition: all 0.3s ease;
+    cursor: pointer;
+    text-decoration: none;
+}
+
+.dock-item:hover {
+    color: #FFFFFF;
+    background: rgba(255, 255, 255, 0.1);
+}
+
+.dock-item.active {
+    color: var(--color-rose-gold);
+}
+
+.dock-item svg {
+    width: 24px;
+    height: 24px;
+}
+
+/* Spotlight Effect */
+.spotlight {
+    position: absolute;
+    top: -2px;
+    left: 0;
+    width: 48px;
+    height: 48px;
+    background: linear-gradient(180deg, var(--color-rose-gold) 0%, transparent 100%);
+    border-radius: 12px;
+    opacity: 0;
+    pointer-events: none;
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.spotlight::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: var(--color-rose-gold);
+    border-radius: 12px 12px 0 0;
+    box-shadow: 0 0 20px var(--color-rose-gold),
+                0 0 40px var(--color-rose-gold);
+}
+/* === Video Showcase Modal: z-degree 3D Effect === */
+
+.project-3d-tilt {
+    transform: rotateY(16deg) rotateX(6deg) skewY(-2deg);
+    transform-style: preserve-3d;
+    transition: transform 0.5s ease, box-shadow 0.5s ease;
+    box-shadow:
+        20px 30px 60px rgba(0, 0, 0, 0.6),
+        0 0 40px rgba(197, 155, 133, 0.25);
+    will-change: transform;
+}
+
+.project-3d-tilt:hover {
+    transform: rotateY(8deg) rotateX(3deg) skewY(-1deg) scale(1.02);
+    box-shadow:
+        25px 35px 70px rgba(0, 0, 0, 0.65),
+        0 0 60px rgba(197, 155, 133, 0.4);
+}
+
+/* Modal base states (GSAP controls opacity/transform inline, these are safe defaults) */
+#projectModal.flex {
+    display: flex;
+}
+
+#modalContent {
+    transform-style: preserve-3d;
+}
+
+.modal-detail {
+    opacity: 0;
+}
+
+/* Scrollbar polish for modal on smaller screens */
+#modalContent::-webkit-scrollbar {
+    width: 6px;
+}
+
+#modalContent::-webkit-scrollbar-thumb {
+    background: var(--color-rose-gold);
+    border-radius: 10px;
+}

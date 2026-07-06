@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% if service %}Edit Service{% else %}New Service{% endif %} - Webify Admin</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        :root {
+            --color-rose-gold: #C59B85;
+            --color-sage-green: #9CAF9A;
+            --color-dusty-mauve: #B1A2B9;
+            --color-slate-blue: #8A9BA8;
+            --color-charcoal-black: #1A1E21;
+        }
+        body {
+            background-color: var(--color-charcoal-black);
+        }
+    </style>
+</head>
+<body class="min-h-screen bg-[var(--color-charcoal-black)]">
+    <div class="flex">
+        <!-- Sidebar -->
+        <aside class="w-64 min-h-screen bg-white bg-opacity-5 backdrop-blur-md border-r border-white border-opacity-10 fixed left-0 top-0">
+            <div class="p-6 border-b border-white border-opacity-10">
+                <h1 class="text-2xl font-bold text-[var(--color-rose-gold)]">Webify</h1>
+                <p class="text-sm text-[var(--color-sage-green)]">Admin Panel</p>
+            </div>
+
+            <nav class="p-4 space-y-2">
+                <a href="{{ url_for('main.admin_dashboard') }}" class="flex items-center px-4 py-3 rounded-xl text-gray-300 hover:bg-white hover:bg-opacity-10 transition-all">
+                    <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path>
+                    </svg>
+                    Overview
+                </a>
+
+                <a href="{{ url_for('main.admin_projects') }}" class="flex items-center px-4 py-3 rounded-xl text-gray-300 hover:bg-white hover:bg-opacity-10 transition-all">
+                    <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path>
+                    </svg>
+                    Manage Projects
+                </a>
+
+                <a href="{{ url_for('main.admin_services') }}" class="flex items-center px-4 py-3 rounded-xl bg-[var(--color-rose-gold)] bg-opacity-20 text-[var(--color-rose-gold)] transition-all">
+                    <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z"></path>
+                    </svg>
+                    Manage Services
+                </a>
+
+                <a href="{{ url_for('main.admin_about') }}" class="flex items-center px-4 py-3 rounded-xl text-gray-300 hover:bg-white hover:bg-opacity-10 transition-all">
+                    <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                    </svg>
+                    Edit About
+                </a>
+            </nav>
+
+            <div class="absolute bottom-0 left-0 right-0 p-4 border-t border-white border-opacity-10">
+                <a href="{{ url_for('main.admin_logout') }}" class="flex items-center px-4 py-3 rounded-xl text-red-400 hover:bg-red-500 hover:bg-opacity-20 transition-all">
+                    <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path>
+                    </svg>
+                    Logout
+                </a>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="flex-1 ml-64 p-8">
+            <!-- Flash Messages -->
+            {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                    {% for category, message in messages %}
+                        <div class="mb-6 p-4 rounded-lg {% if category == 'success' %}bg-green-500 bg-opacity-20 text-green-300 border border-green-500 border-opacity-30{% elif category == 'error' %}bg-red-500 bg-opacity-20 text-red-300 border border-red-500 border-opacity-30{% else %}bg-blue-500 bg-opacity-20 text-blue-300 border border-blue-500 border-opacity-30{% endif %}">
+                            {{ message }}
+                        </div>
+                    {% endfor %}
+                {% endif %}
+            {% endwith %}
+
+            <!-- Page Header -->
+            <div class="mb-8">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <h1 class="text-4xl font-bold text-[var(--color-rose-gold)] mb-2">{% if service %}Edit Service{% else %}New Service{% endif %}</h1>
+                        <p class="text-gray-400">{% if service %}Update service details{% else %}Add a new service to your offerings{% endif %}</p>
+                    </div>
+                    <a href="{{ url_for('main.admin_services') }}" class="px-4 py-2 bg-white bg-opacity-10 rounded-xl text-white hover:bg-opacity-20 transition-all">
+                        ← Back to Services
+                    </a>
+                </div>
+            </div>
+
+            <!-- Service Form -->
+            <div class="bg-white bg-opacity-10 backdrop-blur-md rounded-2xl p-8 border border-white border-opacity-20">
+                <form method="POST" class="space-y-6">
+                    <!-- Title -->
+                    <div>
+                        <label for="title" class="block text-sm font-medium text-gray-300 mb-2">Service Title *</label>
+                        <input
+                            type="text"
+                            id="title"
+                            name="title"
+                            required
+                            value="{% if service %}{{ service.title }}{% endif %}"
+                            class="w-full px-4 py-3 bg-white bg-opacity-10 border border-white border-opacity-20 rounded-xl text-white placeholder-gray-400 focus:outline-none focus:border-[var(--color-rose-gold)] focus:ring-2 focus:ring-[var(--color-rose-gold)] focus:ring-opacity-50 transition-all"
+                            placeholder="Web Development"
+                        >
+                    </div>
+
+                    <!-- Description -->
+                    <div>
+                        <label for="description" class="block text-sm font-medium text-gray-300 mb-2">Description *</label>
+                        <textarea
+                            id="description"
+                            name="description"
+                            rows="4"
+                            required
+                            class="w-full px-4 py-3 bg-white bg-opacity-10 border border-white border-opacity-20 rounded-xl text-white placeholder-gray-400 focus:outline-none focus:border-[var(--color-rose-gold)] focus:ring-2 focus:ring-[var(--color-rose-gold)] focus:ring-opacity-50 transition-all resize-none"
+                            placeholder="Custom web applications built with modern technologies and best practices."
+                        >{% if service %}{{ service.description }}{% endif %}</textarea>
+                    </div>
+
+                    <!-- Icon Name -->
+                    <div>
+                        <label for="icon_name" class="block text-sm font-medium text-gray-300 mb-2">Icon (optional)</label>
+                        <select
+                            id="icon_name"
+                            name="icon_name"
+                            class="w-full px-4 py-3 bg-white bg-opacity-10 border border-white border-opacity-20 rounded-xl text-white focus:outline-none focus:border-[var(--color-rose-gold)] focus:ring-2 focus:ring-[var(--color-rose-gold)] focus:ring-opacity-50 transition-all"
+                        >
+                            <option value="" {% if not service or not service.icon_name %}selected{% endif %}>No Icon</option>
+                            <option value="code" {% if service and service.icon_name == 'code' %}selected{% endif %}>💻 Code (Development)</option>
+                            <option value="palette" {% if service and service.icon_name == 'palette' %}selected{% endif %}>🎨 Palette (Design)</option>
+                            <option value="shopping-bag" {% if service and service.icon_name == 'shopping-bag' %}selected{% endif %}>🛍️ Shopping Bag (E-commerce)</option>
+                            <option value="search" {% if service and service.icon_name == 'search' %}selected{% endif %}>🔍 Search (SEO)</option>
+                            <option value="support" {% if service and service.icon_name == 'support' %}selected{% endif %}>🎯 Support (Maintenance)</option>
+                            <option value="chart" {% if service and service.icon_name == 'chart' %}selected{% endif %}>📊 Chart (Analytics)</option>
+                            <option value="mobile" {% if service and service.icon_name == 'mobile' %}selected{% endif %}>📱 Mobile (Mobile Apps)</option>
+                            <option value="brand" {% if service and service.icon_name == 'brand' %}selected{% endif %}>✨ Brand (Branding)</option>
+                        </select>
+                        <p class="mt-1 text-xs text-gray-500">Select an icon to represent this service</p>
+                    </div>
+
+                    <!-- Submit Button -->
+                    <div class="flex gap-4">
+                        <button
+                            type="submit"
+                            class="flex-1 py-3 bg-[var(--color-rose-gold)] text-[var(--color-charcoal-black)] font-bold rounded-xl hover:bg-opacity-90 transition-all transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-[var(--color-rose-gold)] focus:ring-opacity-50"
+                        >
+                            {% if service %}Update Service{% else %}Create Service{% endif %}
+                        </button>
+                        
+                        <a href="{{ url_for('main.admin_services') }}" class="px-6 py-3 bg-white bg-opacity-10 rounded-xl text-white hover:bg-opacity-20 transition-all">Cancel</a>
+                    </div>
+                </form>
+            </div>
+        </main>
+    </div>
+</body>
+</html>
